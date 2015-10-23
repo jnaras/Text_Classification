@@ -1,0 +1,30 @@
+Our algorithm combines four different models in order to generate predictions.
+
+1) Calculate features from the word strings.
+    a) Tokenize words (remove punctuation and stopwords)
+    b) Calculate parts of speech, keep only nouns
+    c) Combine the tokenized words with the nouns
+
+2) Run ensemble (4 models: support vector classifier, multinomial naive bayes, logistic regression, k nearest neighbors)
+    a) Calculate features for each of the models
+        i) Vectorize data (parameters of vectorization selected via grid search -see below)
+            Turn words into a vector whose elements correspond to one word (1/0 if the word is/not present in the current item).
+            Vector length is the total number of words
+            ii) Calculate tf/idf from the vectorized words
+                Combing tokenized words with nouns has the effect of weighting nouns more heavily than other POS
+    b) Train models
+    c) Generate predictions for each model
+    d) Vote on the best label.
+        If there is a tie, pick a random model's prediction
+
+In order to select the parameters for the vectorization and for the models themselves, we initiated a grid search with cross validation over the different parameters.
+
+For vectorization, we tried making features out of word versus character n-grams of different sizes (including unigrams, bigrams, and 5-grams)
+Character n-grams are supposed to be more robust to misspelled words, yet we found that across cross-validation folds, using word ngrams was more successful.
+
+We also searched over different penalty parameters for the models (for logistic regression and SVM).
+
+We initially included tf/idf in the grid search and saw that it consistently improved accuracy for all models.
+
+To select the best parameters, the grid search searches over all parameter values and generates a score. We used the parameters corresponding to the model with the highest score for each of our models.
+
