@@ -5,7 +5,7 @@ Our algorithm combines four different models in order to generate predictions.
     b) Calculate parts of speech, keep only nouns
     c) Combine the tokenized words with the nouns
 
-2) Run ensemble (4 models: support vector classifier, multinomial naive bayes, logistic regression, k nearest neighbors)
+2) Run ensemble (4 models: support vector classifier with a linear kernel, support vector classifier with an RBF kernel, multinomial naive bayes, logistic regression, k nearest neighbors)
     a) Calculate features for each of the models
         i) Vectorize data (parameters of vectorization selected via grid search -see below)
             Turn words into a vector whose elements correspond to one word (1/0 if the word is/not present in the current item).
