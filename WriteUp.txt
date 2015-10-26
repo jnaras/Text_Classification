@@ -17,18 +17,21 @@ Our algorithm combines four different models in order to generate predictions.
     d) Vote on the best label.
         If there is a tie, pick a random model's prediction
 
-In order to select the parameters for the vectorization and for the models themselves, we initiated a grid search with cross validation over the different parameters.
+Grid Search:
+In order to select the parameters for the vectorization and for the models themselves, we initiated a grid search with cross validation over the different parameters. To select the best parameters, the grid search searches over all parameter values and generates a score. We used the parameters corresponding to the model with the highest score for each of our models.
+Some of the parameters explored (not an exhaustive list):
+1) whether to split the n-grams by words or by characters within word boundaries
+	Character n-grams are supposed to be more robust to misspelled words
+	We found that using word ngrams was more successful for most of the models except for the K nearest neighbors model.
+2) size of the n-grams to use
+	We tried making features out of word versus character n-grams of different sizes (including unigrams, bigrams, and 5-grams)
+3) penalty parameters (for logistic regression and SVM)
+4) maximum number of features
+	We found that limiting the maximum number of features did not improve our models.
+5) whether or not to include tf/idf
+	We initially included tf/idf in the grid search and saw that it consistently improved accuracy for all models. 
 
-For vectorization, we tried making features out of word versus character n-grams of different sizes (including unigrams, bigrams, and 5-grams)
-Character n-grams are supposed to be more robust to misspelled words, yet we found that across cross-validation folds, using word ngrams was more successful for most of the models except for the K nearest neighbors model.
-
-We also searched over different penalty parameters for the models (for logistic regression and SVM).
-
-We initially included tf/idf in the grid search and saw that it consistently improved accuracy for all models.
-
-To select the best parameters, the grid search searches over all parameter values and generates a score. We used the parameters corresponding to the model with the highest score for each of our models.
-
-Along the way, we discovered some methods that did not work so well using 10 fold cross-validation and the grid-search. One of the readings mentioned using the frequency of the POS tags as an effective features for signaling the popularity of a certain genre of book. However, this feature did not improve the score at all. We also tried just using the nouns as features, but using the raw counts worked better. Eventually we combined the text of the sentence with the nouns. In this way, the tfidf would weight the nouns slightly higher because they were repeated, but it would also consider other potentially important parts of speech.
+Along the way, we discovered some methods that did not work so well using 10 fold cross-validation and the grid-search. One of the readings mentioned using the frequency of the POS tags as an effective features for signaling the popularity of a certain genre of book. However, this feature did not improve the score. We also tried just using the nouns as features, but using the raw counts worked better. Eventually we combined the text of the sentence with the nouns. In this way, the tf/idf would weight the nouns slightly higher because they were repeated, but it would also consider other potentially important parts of speech.
 
 We did train and tune a Multinomial Naive Bayes model as well, but while the other models would consistently get above .50 accuracy during cross-validation, the Multinomial Naive Bayes remained around .41-.45.
 
@@ -39,4 +42,4 @@ Matar - grid search over different models using Pipelines, discovering which fea
 Jaya - organizing code into functions, writing ensemble predictor
 Both - writeup 
 
-In writing the ensemble predictor, Jaya accidentally made it only output the label predicted by the tuned logistic regression model. This scored .59604 on Kaggle. Jaya corrected the mistake but the score on Kaggle fell to .5889. We decided to go with the latter model because it fluctuates less often than logistic regression does all by itself.
+In writing the ensemble predictor, Jaya accidentally made it only output the label predicted by the tuned logistic regression model. This scored .59604 on Kaggle. Jaya corrected the mistake but the score on Kaggle fell to .5889. We decided to go with the latter model because it fluctuates less than logistic regression by itself.
